@@ -1,59 +1,82 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using Microsoft.Win32;
 
-namespace UnqoutedPath
+namespace UnquotedPath
 {
     class Program
     {
         private static string GetServiceInstallPath(string serviceName)
         {
-            RegistryKey regkey;
-            regkey = Registry.LocalMachine.OpenSubKey(string.Format(@"SYSTEM\CurrentControlSet\services\{0}", serviceName));
+            using (RegistryKey regkey = Registry.LocalMachine.OpenSubKey($@"SYSTEM\CurrentControlSet\services\{serviceName}"))
+            {
+                if (regkey == null || regkey.GetValue("ImagePath") == null)
+                    return "Not Found";
 
-            if (regkey.GetValue("ImagePath") == null)
-                return "Not Found";
-            else
                 return regkey.GetValue("ImagePath").ToString();
+            }
         }
 
         static void Main(string[] args)
         {
             List<string> vulnSvcs = new List<string>();
-            RegistryKey services = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\");
-            foreach (var service in services.GetSubKeyNames())
+
+            try
             {
-                RegistryKey imagePath = services.OpenSubKey(service);
-                foreach (var value in imagePath.GetValueNames())
+                Console.WriteLine("Starting unquoted service paths scan...");
+
+                Stopwatch stopwatch = new Stopwatch();
+                stopwatch.Start();
+
+                using (RegistryKey services = Registry.LocalMachine.OpenSubKey(@"SYSTEM\CurrentControlSet\Services\"))
                 {
-                    string path = Convert.ToString(imagePath.GetValue("ImagePath"));
-                    if (!string.IsNullOrEmpty(path))
+                    if (services == null)
                     {
-                        if (!path.Contains("\"") && path.Contains(" ")) //If path is unquoted and has a space...
+                        Console.WriteLine("[-] Unable to access services registry key.");
+                        return;
+                    }
+
+                    foreach (string service in services.GetSubKeyNames())
+                    {
+                        using (RegistryKey imagePath = services.OpenSubKey(service))
                         {
-                            if (!path.Contains("System32") && !path.Contains("system32") && !path.Contains("SysWow64")) //...and is not System32/SysWow64
+                            if (imagePath == null)
+                                continue;
+
+                            string path = Convert.ToString(imagePath.GetValue("ImagePath"));
+                            if (!string.IsNullOrEmpty(path) && !path.Contains("\"") && path.Contains(" ") &&
+                                !path.Contains("System32", StringComparison.OrdinalIgnoreCase) &&
+                                !path.Contains("SysWow64", StringComparison.OrdinalIgnoreCase))
                             {
                                 vulnSvcs.Add(path);
                             }
                         }
                     }
-
                 }
 
-            }
-            List<string> distinctPaths = vulnSvcs.Distinct().ToList();
-            if (!distinctPaths.Any())
-            {
-                Console.WriteLine("[-] Couldn't find any unquoted services paths");
-            }
-            else
-            {
-                Console.WriteLine("[+] Unquoted service paths found");
-                foreach (string path in distinctPaths)
+                stopwatch.Stop();
+
+                List<string> distinctPaths = vulnSvcs.Distinct().ToList();
+                if (!distinctPaths.Any())
                 {
-                    Console.WriteLine(path);
+                    Console.WriteLine("[-] Couldn't find any unquoted service paths.");
                 }
+                else
+                {
+                    Console.WriteLine("[+] Unquoted service paths found:");
+                    foreach (string path in distinctPaths)
+                    {
+                        Console.WriteLine($"  - {path}");
+                    }
+                }
+
+                Console.WriteLine($"\nScan completed in {stopwatch.Elapsed.TotalSeconds:F2} seconds.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[-] An error occurred: {ex.Message}");
             }
         }
     }

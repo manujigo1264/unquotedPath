@@ -1,0 +1,15 @@
+C:\Users\manuj\source\repos\unquotedPath\bin\Debug\net8.0\unquotedPath.exe
+C:\Users\manuj\source\repos\unquotedPath\bin\Debug\net8.0\unquotedPath.deps.json
+C:\Users\manuj\source\repos\unquotedPath\bin\Debug\net8.0\unquotedPath.runtimeconfig.json
+C:\Users\manuj\source\repos\unquotedPath\bin\Debug\net8.0\unquotedPath.dll
+C:\Users\manuj\source\repos\unquotedPath\bin\Debug\net8.0\unquotedPath.pdb
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.AssemblyInfoInputs.cache
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.AssemblyInfo.cs
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.csproj.CoreCompileInputs.cache
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.sourcelink.json
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.dll
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\refint\unquotedPath.dll
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.pdb
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\unquotedPath.genruntimeconfig.cache
+C:\Users\manuj\source\repos\unquotedPath\obj\Debug\net8.0\ref\unquotedPath.dll
